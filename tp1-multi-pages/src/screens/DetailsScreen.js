@@ -110,13 +110,13 @@ export default function DetailsScreen() {
 
       <Text style={styles.title}>{chien}</Text>
       {/* 26x theme ------- */}
-      <View style={[styles.chienContainer, { backgroundColor: themee[theme] }]}>
+      <View style={[styles.chienContainer, { backgroundColor: THEME[theme].chienContainer }]}>
+
         {/* German Shepherd */}
         <Image style={styles.image} source={german} />
         <TouchableOpacity
-          onPress={() => setChien("German Shepherds")}
-          style={styles.button}
-        >
+        onPress={() => setChien("German Shepherds")}
+        style={[styles.button, { backgroundColor: THEME[theme].button }]}>
           <Text style={styles.text}>German</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -124,7 +124,10 @@ export default function DetailsScreen() {
             setLikesGerman((prev) => prev + 1);
             animateLike(scaleGerman);
           }}
-          style={styles.buttonLike}
+          style={[
+            styles.buttonLike,
+            { backgroundColor: THEME[theme].buttonLike },
+          ]}
         >
           <Animated.Text
             style={[styles.likeText, { transform: [{ scale: scaleGerman }] }]}
@@ -136,17 +139,20 @@ export default function DetailsScreen() {
         {/* Chihuahua */}
         <Image style={styles.image} source={chihuahua} />
         <TouchableOpacity
-          onPress={() => setChien("Chihuahuas")}
-          style={styles.button}
-        >
-          <Text style={styles.text}>Chihuahuas</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        onPress={() => setChien("Chihuahuas")}
+        style={[styles.button, { backgroundColor: THEME[theme].button }]}>
+  <Text style={styles.text}>Chihuahuas</Text>
+</TouchableOpacity>
+
+     <TouchableOpacity
           onPress={() => {
             setLikesChihuahua((prev) => prev + 1);
             animateLike(scaleChihuahua);
           }}
-          style={styles.buttonLike}
+          style={[
+            styles.buttonLike,
+            { backgroundColor: THEME[theme].buttonLike },
+          ]}
         >
           <Animated.Text
             style={[
@@ -161,17 +167,20 @@ export default function DetailsScreen() {
         {/* Poodle */}
         <Image style={styles.image} source={poodle} />
         <TouchableOpacity
-          onPress={() => setChien("Poodles")}
-          style={styles.button}
-        >
-          <Text style={styles.text}>Poodles</Text>
-        </TouchableOpacity>
+        onPress={() => setChien("Poodles")}
+        style={[styles.button, { backgroundColor: THEME[theme].button }]}>
+  <Text style={styles.text}>Poodles</Text>
+</TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => {
             setLikesPoodle((prev) => prev + 1);
             animateLike(scalePoodle);
           }}
-          style={styles.buttonLike}
+          style={[
+            styles.buttonLike,
+            { backgroundColor: THEME[theme].buttonLike },
+          ]}
         >
           <Animated.Text
             style={[styles.likeText, { transform: [{ scale: scalePoodle }] }]}
@@ -182,7 +191,8 @@ export default function DetailsScreen() {
       </View>
 
       {/* Détails du chien */}
-      <View style={styles.detailContainer}>
+      <View style={[styles.detailContainer, { backgroundColor: THEME[theme].detailContainer }]}>
+
         <Text style={styles.textChienTitre}>{"Détails du Chien"}</Text>
         <Text style={styles.textChien}>
           {"Nom: "}
@@ -207,7 +217,8 @@ export default function DetailsScreen() {
       </View>
 
       {/* Graphique */}
-      <View style={styles.chartContainer}>
+      <View style={[styles.chartContainer, { backgroundColor: THEME[theme].chartContainer }]}>
+
         <Text style={styles.chartTitle}>Évolution du poids du chien</Text>
 
         <LineChart
@@ -332,7 +343,19 @@ const styles = StyleSheet.create({
   },
 });
 // 26x theme -------
-const themee = {
-  rose: "#fce4ec",  
-  bleu: "#e4f1fc",   
+const THEME = {
+  rose: {
+    chienContainer: "#fce4ec",   
+    button: "#f8bbd0",           
+    buttonLike: "#f48fb1",     
+    detailContainer: "#fce4ec",  
+    chartContainer: "#fce4ec",   
+  },
+  bleu: {
+    chienContainer: "#e4f1fc",  
+    button: "#bbdefb",          
+    buttonLike: "#64b5f6",       
+    detailContainer: "#e4f1fc",  
+    chartContainer: "#e4f1fc",   
+  },
 };
