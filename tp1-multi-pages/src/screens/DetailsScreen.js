@@ -19,6 +19,9 @@ import poodle from "../../assets/dog/poodle.png";
 export default function DetailsScreen() {
   const screenWidth = Dimensions.get("window").width;
 
+  const [theme, setTheme] = useState("rose"); 
+
+
   const poidsParAge = {
     "German Shepherds": [10, 15, 20, 25, 35],
     Chihuahuas: [1, 1.5, 2, 2.5, 3],
@@ -89,9 +92,25 @@ export default function DetailsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <Text style={styles.title}>{chien}</Text>
 
-      <View style={styles.chienContainer}>
+
+
+     {/* 26x BOUTONN PR CHAN?GER? DE THEME */}
+     <TouchableOpacity
+  onPress={() => setTheme(theme === "rose" ? "bleu" : "rose")}
+  style={{ alignSelf: "center",
+    paddingHorizontal: 16,
+    backgroundColor: "#eec2f6ff",
+  }} >
+  <Text>
+    thème: {theme === "rose" ? "rose" : "bleu"}
+  </Text>
+</TouchableOpacity>
+
+
+      <Text style={styles.title}>{chien}</Text>
+      {/* 26x theme ------- */}
+      <View style={[styles.chienContainer, { backgroundColor: themee[theme] }]}>
         {/* German Shepherd */}
         <Image style={styles.image} source={german} />
         <TouchableOpacity
@@ -229,7 +248,7 @@ const styles = StyleSheet.create({
     color: "#880e4f",
   },
   chienContainer: {
-    backgroundColor: "#fce4ec",
+    backgroundColor: "#e4f1fcff",
     padding: 20,
     marginBottom: 20,
     borderRadius: 15,
@@ -312,3 +331,8 @@ const styles = StyleSheet.create({
     color: "#880e4f",
   },
 });
+// 26x theme -------
+const themee = {
+  rose: "#fce4ec",  
+  bleu: "#e4f1fc",   
+};
