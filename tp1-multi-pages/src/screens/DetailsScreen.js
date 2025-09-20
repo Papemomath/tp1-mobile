@@ -1,117 +1,314 @@
-import React, { use, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Animated,
+  Dimensions,
+} from "react-native";
+
+import { LineChart } from "react-native-chart-kit";
 
 import german from "../../assets/dog/german.png";
 import chihuahua from "../../assets/dog/chihuahua.png";
 import poodle from "../../assets/dog/poodle.png";
 
 export default function DetailsScreen() {
+  const screenWidth = Dimensions.get("window").width;
 
-  const [chien, setChien] = useState("Votre chien");
+  const poidsParAge = {
+    "German Shepherds": [10, 15, 20, 25, 35],
+    Chihuahuas: [1, 1.5, 2, 2.5, 3],
+    Poodles: [5, 6, 8, 9, 10],
+  };
 
-  const [age, seAge] = useState(0);
+  const ageLabels = ["1 an", "2 ans", "3 ans", "4 ans", "5 ans"];
+
+  const [chien, setChien] = useState("Choisissez un chien");
+  const [age, setAge] = useState(0);
   const [poids, setPoids] = useState(0);
   const [couleur, setCouleur] = useState("");
+  const [likesGerman, setLikesGerman] = useState(0);
+  const [likesChihuahua, setLikesChihuahua] = useState(0);
+  const [likesPoodle, setLikesPoodle] = useState(0);
+  const [likes, setLikes] = useState(0);
+
+  const [chartData, setChartData] = useState([]);
+
+  const [scaleGerman] = useState(new Animated.Value(1));
+  const [scaleChihuahua] = useState(new Animated.Value(1));
+  const [scalePoodle] = useState(new Animated.Value(1));
+
+  const animateLike = (scale) => {
+    Animated.sequence([
+      Animated.timing(scale, {
+        toValue: 1.5,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   useEffect(() => {
     if (chien === "German Shepherds") {
-      seAge(3);
+      setAge(3);
       setPoids(30);
       setCouleur("Noir et feu");
+      setLikes(likesGerman);
     } else if (chien === "Chihuahuas") {
-      seAge(2);
+      setAge(2);
       setPoids(3);
       setCouleur("Beige");
+      setLikes(likesChihuahua);
     } else if (chien === "Poodles") {
-      seAge(4);
+      setAge(4);
       setPoids(10);
       setCouleur("Blanc");
+      setLikes(likesPoodle);
     } else {
-      seAge(0);
+      setAge(0);
       setPoids(0);
       setCouleur("");
+      setLikes(0);
     }
-  }, [chien]);
 
+    if (poidsParAge[chien]) {
+      setChartData(poidsParAge[chien]);
+    } else {
+      setChartData([0]);
+    }
+  }, [chien, likesGerman, likesChihuahua, likesPoodle]);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.title}>{chien}</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <Text style={styles.title}>{chien}</Text>
 
-        <View style={styles.containerGrid}> 
-          <Image style={styles.image} source={german} />
+      <View style={styles.chienContainer}>
+        {/* German Shepherd */}
+        <Image style={styles.image} source={german} />
+        <TouchableOpacity
+          onPress={() => setChien("German Shepherds")}
+          style={styles.button}
+        >
+          <Text style={styles.text}>German</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setLikesGerman((prev) => prev + 1);
+            animateLike(scaleGerman);
+          }}
+          style={styles.buttonLike}
+        >
+          <Animated.Text
+            style={[styles.likeText, { transform: [{ scale: scaleGerman }] }]}
+          >
+            ❤️ {likesGerman}
+          </Animated.Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setChien("German Shepherds")} style={styles.button}>
-            <Text style={styles.text} TouchableOpacity>German</Text>
-          </TouchableOpacity>
+        {/* Chihuahua */}
+        <Image style={styles.image} source={chihuahua} />
+        <TouchableOpacity
+          onPress={() => setChien("Chihuahuas")}
+          style={styles.button}
+        >
+          <Text style={styles.text}>Chihuahuas</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setLikesChihuahua((prev) => prev + 1);
+            animateLike(scaleChihuahua);
+          }}
+          style={styles.buttonLike}
+        >
+          <Animated.Text
+            style={[
+              styles.likeText,
+              { transform: [{ scale: scaleChihuahua }] },
+            ]}
+          >
+            ❤️ {likesChihuahua}
+          </Animated.Text>
+        </TouchableOpacity>
 
-          <Image style={styles.image} source={chihuahua} />
-
-            <TouchableOpacity onPress={() => setChien("Chihuahuas")} style={styles.button}>
-              <Text style={styles.text}>Chihuahuas</Text>
-            </TouchableOpacity>
-
-          <Image style={styles.image} source={poodle} />
-
-            <TouchableOpacity onPress={() => setChien("Poodles")} style={styles.button}>
-              <Text style={styles.text}>Poodles</Text>
-            </TouchableOpacity>
-        </View>
-
+        {/* Poodle */}
+        <Image style={styles.image} source={poodle} />
+        <TouchableOpacity
+          onPress={() => setChien("Poodles")}
+          style={styles.button}
+        >
+          <Text style={styles.text}>Poodles</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setLikesPoodle((prev) => prev + 1);
+            animateLike(scalePoodle);
+          }}
+          style={styles.buttonLike}
+        >
+          <Animated.Text
+            style={[styles.likeText, { transform: [{ scale: scalePoodle }] }]}
+          >
+            ❤️ {likesPoodle}
+          </Animated.Text>
+        </TouchableOpacity>
       </View>
 
-      <View/>
+      {/* Détails du chien */}
+      <View style={styles.detailContainer}>
+        <Text style={styles.textChienTitre}>{"Détails du Chien"}</Text>
+        <Text style={styles.textChien}>
+          {"Nom: "}
+          {chien}
+        </Text>
+        <Text style={styles.textChien}>
+          {"Âge: "}
+          {age} ans
+        </Text>
+        <Text style={styles.textChien}>
+          {"Poids: "}
+          {poids} kg
+        </Text>
+        <Text style={styles.textChien}>
+          {"Couleur: "}
+          {couleur}
+        </Text>
+        <Text style={styles.textChien}>
+          {"Likes: "}
+          {likes}
+        </Text>
+      </View>
 
-      <Text style={styles.caca}> {"Detaille du Chien !!!"}</Text>
-      <Text style={styles.caca}>{"nom du chien sale:  "}{chien}</Text>
-      <Text style={styles.caca}>{"age du chien:  "}{age}{" ans"}</Text>
-      <Text style={styles.caca}>{"poids du chien:  "}{poids}{" kg"}</Text>
-      <Text style={styles.caca}>{"couleur du chien:  "}{couleur}</Text>
-      
-  
-      <View/>
+      {/* Graphique */}
+      <View style={styles.chartContainer}>
+        <Text style={styles.chartTitle}>Évolution du poids du chien</Text>
 
-
+        <LineChart
+          data={{
+            labels: ageLabels,
+            datasets: [{ data: chartData }],
+          }}
+          width={screenWidth - 32}
+          height={220}
+          yAxisSuffix=" kg"
+          chartConfig={{
+            backgroundColor: "#fce4ec",
+            backgroundGradientFrom: "#fce4ec",
+            backgroundGradientTo: "#f8bbd0",
+            decimalPlaces: 0,
+            color: (opacity = 1) => `rgba(136, 14, 79, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(74, 20, 140, ${opacity})`,
+            style: { borderRadius: 16 },
+            propsForDots: { r: "6", strokeWidth: "2", stroke: "#880e4f" },
+          }}
+          bezier
+          style={{ marginVertical: 8, borderRadius: 16 }}
+        />
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    padding: 16 
+  scrollContainer: {
+    paddingVertical: 20,
+    alignItems: "center",
   },
-  title: { 
-    fontSize: 22, 
-    fontWeight: '600', 
-    marginBottom: 8 
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 20,
+    color: "#880e4f",
+  },
+  chienContainer: {
+    backgroundColor: "#fce4ec",
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 15,
+    width: "90%",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   image: {
-    width:200,
-    height:200,
-    position:"relative",
-    right:75
+    width: 150,
+    height: 150,
+    marginVertical: 10,
+    borderRadius: 15,
   },
   button: {
-    borderRadius:10, 
-    borderWidth:2,
-    position: "relative",
-    left: 150,
-    width: 100,
-    bottom: 100,
-    padding: 10
-  }, 
-  text: {
-    textAlign: "center"
+    backgroundColor: "#f8bbd0",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: "#f48fb1",
   },
-  caca: {
-    left: 30,
-    height: 32,
-    fontSize: 22, 
-    fontWeight: '600', 
-    marginBottom: 8 
-  }
+  text: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#880e4f",
+    fontWeight: "600",
+  },
+  buttonLike: {
+    backgroundColor: "#f48fb1",
+    borderRadius: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    marginVertical: 5,
+  },
+  likeText: {
+    color: "white",
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  detailContainer: {
+    backgroundColor: "#fce4ec",
+    padding: 20,
+    width: "90%",
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 30,
+  },
+  textChienTitre: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 12,
+    textAlign: "center",
+    color: "#880e4f",
+  },
+  textChien: {
+    fontSize: 18,
+    fontWeight: "500",
+    marginBottom: 6,
+    color: "#4a148c",
+  },
+  chartContainer: {
+    margin: 0,
+    backgroundColor: "#fce4ec",
+    padding: 10,
+    borderRadius: 15,
+  },
+  chartTitle: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#880e4f",
+  },
 });
