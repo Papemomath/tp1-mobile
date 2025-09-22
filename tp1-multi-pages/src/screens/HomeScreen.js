@@ -8,6 +8,8 @@ export default function HomeScreen({ navigation }) {
       <Button title="Aller aux Détails" onPress={() => navigation.navigate('Details')} />
       <View style={{ height: 12 }} />
       <Button title="Voir le Compteur" onPress={() => navigation.navigate('Counter')} />
+      <View style={{ height: 12 }} />
+      <Button title="Search dog" onPress={() => navigation.navigate('Search')} />
     </View>
   );
 }

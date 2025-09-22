@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import DetailsScreen from '../screens/DetailsScreen';
 import CounterScreen from '../screens/CounterScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import SearchScreen from '../screens/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -23,6 +24,11 @@ function Tabs() {
         name="Counter" 
         component={CounterScreen} 
         options={{ title: 'Compteur' }} 
+      />
+      <Tab.Screen 
+        name="Search" 
+        component={SearchScreen} 
+        options={{ title: 'Search' }} 
       />
       <Tab.Screen 
         name="Settings" 
