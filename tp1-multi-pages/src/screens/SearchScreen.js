@@ -21,6 +21,11 @@ export default function SearchScreen({ navigation }) {
     race.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  function addNewRace(newRace) {
+    setRace([...race, newRace]);
+    setSearchQuery('');
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Search Dog Race</Text>
@@ -43,6 +48,24 @@ export default function SearchScreen({ navigation }) {
             <Text style={styles.text}>{item}</Text>
           </TouchableOpacity>
         )}
+
+        ListEmptyComponent={() => (
+        <View>
+
+          <Text style={{ marginTop: 10, fontStyle: 'italic', color: '#888' }}>
+          Aucune race trouvée
+          </Text>
+          <TouchableOpacity 
+            style={styles.buttonAdd}
+            onPress={() => addNewRace(searchQuery)}
+          >
+            <Text style={styles.text}>
+              Ajouté a la nouvelle race
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+      )}
       />
 
       <View style={styles.row}>
@@ -82,6 +105,15 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderWidth: 1,
     borderColor: '#f48fb1',
+  },
+  buttonAdd: {
+    backgroundColor: '#1c5f97ff',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: '#3e9aa7ff',
   },
   text: {
     fontSize: 16,
