@@ -1,16 +1,28 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Accueil</Text>
-      <Button title="Aller aux Détails" onPress={() => navigation.navigate('Details')} />
-      <View style={{ height: 12 }} />
-      <Button title="Voir le Compteur" onPress={() => navigation.navigate('Counter')} />
-      <View style={{ height: 12 }} />
-      <Button title="Search dog" onPress={() => navigation.navigate('Search')} />
-    </View>
+    <ImageBackground 
+      source={require('../../assets/appBackgound.jpg')} 
+      style={{flex: 1, resizeMode: 'cover', justifyContent: 'center'}}
+    >
+      <View style={styles.container}>
+
+
+        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Details')}>
+          <Text style={styles.btnText}>Aller aux Détails</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Counter')}>
+          <Text style={styles.btnText}>Voir le Compteur</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Search')}>
+          <Text style={styles.btnText}>Search Dog</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -21,7 +33,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center' 
   },
   title: { 
-    fontSize: 22, 
-    fontWeight: '600' 
+    fontSize: 26, 
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 30,
   },
-});
+  btn: {
+    backgroundColor: '#0080ffff',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+
+    marginVertical: 8,
+    width: 220,
+    alignItems: 'center',
+
+
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  }
+})
