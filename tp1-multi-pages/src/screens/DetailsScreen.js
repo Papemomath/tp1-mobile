@@ -8,31 +8,33 @@ import {
   ScrollView,
   Animated,
   Dimensions,
+  Modal, //form
+  TextInput,
 } from "react-native";
- 
+
 import { LineChart } from "react-native-chart-kit";
- 
+
 import german from "../../assets/dog/german.png";
 import chihuahua from "../../assets/dog/chihuahua.png";
 import poodle from "../../assets/dog/poodle.png";
- 
+import dogDefault from "../../assets/dog/german.png";
+
 export default function DetailsScreen({ route }) {
   const { race } = route.params || {};
 
-
   const screenWidth = Dimensions.get("window").width;
- 
+
   const [theme, setTheme] = useState("rose");
- 
+
   const poidsParAge = {
     "German Shepherds": [10, 15, 20, 25, 35],
     Chihuahuas: [1, 1.5, 2, 2.5, 3],
     Poodles: [5, 6, 8, 9, 10],
   };
- 
+
   const ageLabels = ["1 an", "2 ans", "3 ans", "4 ans", "5 ans"];
- 
-  const [chien, setChien] = useState( race || "Choisissez un chien");
+
+  const [chien, setChien] = useState(race || "Choisissez un chien");
   const [age, setAge] = useState(0);
   const [poids, setPoids] = useState(0);
   const [couleur, setCouleur] = useState("");
@@ -40,13 +42,21 @@ export default function DetailsScreen({ route }) {
   const [likesChihuahua, setLikesChihuahua] = useState(0);
   const [likesPoodle, setLikesPoodle] = useState(0);
   const [likes, setLikes] = useState(0);
- 
+
   const [chartData, setChartData] = useState([]);
- 
+
   const [scaleGerman] = useState(new Animated.Value(1));
   const [scaleChihuahua] = useState(new Animated.Value(1));
   const [scalePoodle] = useState(new Animated.Value(1));
- 
+
+  const [poidsParAgeMap, setPoidsParAgeMap] = useState(poidsParAge);
+  const [chienPerso, setChienPerso] = useState([]);
+  const [modalOuvert, setModalOuvert] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newAge, setNewAge] = useState("");
+  const [newPoids, setNewPoids] = useState("");
+  const [newCouleur, setNewCouleur] = useState("");
+
   const animateLike = (scale) => {
     Animated.sequence([
       Animated.timing(scale, {
@@ -65,45 +75,44 @@ export default function DetailsScreen({ route }) {
   useEffect(() => {
     if (chien === "German Shepherds") {
       setAge(3);
- 
+
       setPoids(30);
- 
+
       setCouleur("Noir et feu");
- 
+
       setLikes(likesGerman);
     } else if (chien === "Chihuahuas") {
       setAge(2);
- 
+
       setPoids(3);
- 
+
       setCouleur("Beige");
- 
+
       setLikes(likesChihuahua);
     } else if (chien === "Poodles") {
       setAge(4);
- 
+
       setPoids(10);
- 
+
       setCouleur("Blanc");
- 
+
       setLikes(likesPoodle);
     } else {
       setAge(0);
- 
+
       setPoids(0);
- 
+
       setCouleur("");
- 
+
       setLikes(0);
     }
 
-    if (poidsParAge[chien]) {
-      setChartData(poidsParAge[chien]);
+    if (poidsParAgeMap[chien]) {
+      setChartData(poidsParAgeMap[chien]);
     } else {
       setChartData(new Array(ageLabels.length).fill(0));
     }
-  }, [chien, likesGerman, likesChihuahua, likesPoodle]);
- 
+  }, [chien, likesGerman, likesChihuahua, likesPoodle, poidsParAgeMap]);
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       {/* 26x BOUTONN PR CHAN?GER? DE THEME */}
@@ -117,7 +126,14 @@ export default function DetailsScreen({ route }) {
       >
         <Text>thème: {theme === "rose" ? "rose" : "bleu"}</Text>
       </TouchableOpacity>
- 
+
+      <TouchableOpacity
+        onPress={() => setModalOuvert(true)}
+        style={styles.button}
+      >
+        <Text style={styles.text}>AJOUTER UN CHIEN</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>{chien}</Text>
       {/* 26x theme ------- */}
       <View
@@ -150,7 +166,7 @@ export default function DetailsScreen({ route }) {
             ❤️ {likesGerman}
           </Animated.Text>
         </TouchableOpacity>
- 
+
         {/* Chihuahua */}
         <Image style={styles.image} source={chihuahua} />
         <TouchableOpacity
@@ -159,7 +175,7 @@ export default function DetailsScreen({ route }) {
         >
           <Text style={styles.text}>Chihuahuas</Text>
         </TouchableOpacity>
- 
+
         <TouchableOpacity
           onPress={() => {
             setLikesChihuahua((prev) => prev + 1);
@@ -179,7 +195,7 @@ export default function DetailsScreen({ route }) {
             ❤️ {likesChihuahua}
           </Animated.Text>
         </TouchableOpacity>
- 
+
         {/* Poodle */}
         <Image style={styles.image} source={poodle} />
         <TouchableOpacity
@@ -188,7 +204,7 @@ export default function DetailsScreen({ route }) {
         >
           <Text style={styles.text}>Poodles</Text>
         </TouchableOpacity>
- 
+
         <TouchableOpacity
           onPress={() => {
             setLikesPoodle((prev) => prev + 1);
@@ -205,8 +221,29 @@ export default function DetailsScreen({ route }) {
             ❤️ {likesPoodle}
           </Animated.Text>
         </TouchableOpacity>
+        {chienPerso.length > 0 && (
+          <>
+            {chienPerso.map((val1, val2) => (
+              <View key={val2}>
+                <Image style={styles.image} source={dogDefault} />
+                <TouchableOpacity
+                  onPress={() => {
+                    setChien(val1.name);
+                    setAge(val1.age);
+                    setPoids(val1.poids);
+                    setCouleur(val1.couleur);
+                    setLikes(0);
+                  }}
+                  style={styles.button}
+                >
+                  <Text style={styles.text}>{val1.name}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </>
+        )}
       </View>
- 
+
       {/* Détails du chien */}
       <View
         style={[
@@ -236,7 +273,7 @@ export default function DetailsScreen({ route }) {
           {likes}
         </Text>
       </View>
- 
+
       {/* Graphique */}
       <View
         style={[
@@ -245,34 +282,34 @@ export default function DetailsScreen({ route }) {
         ]}
       >
         <Text style={styles.chartTitle}>Évolution du poids du chien</Text>
- 
+
         {chartData.length === ageLabels.length && (
           <LineChart
             data={{
               labels: ageLabels,
- 
+
               datasets: [
                 {
                   data: chartData.map((v) => (isFinite(v) ? Number(v) : 0)),
                 },
               ],
             }}
-            width={Math.max(screenWidth - 32, 300)} 
+            width={Math.max(screenWidth - 32, 300)}
             height={220}
             yAxisSuffix=" kg"
             chartConfig={{
               backgroundColor: "#fce4ec",
- 
+
               backgroundGradientFrom: "#fce4ec",
- 
+
               backgroundGradientTo: "#f8bbd0",
- 
+
               decimalPlaces: 0,
- 
+
               color: (opacity = 1) => `rgba(136, 14, 79, ${opacity})`,
- 
+
               labelColor: (opacity = 1) => `rgba(74, 20, 140, ${opacity})`,
- 
+
               style: { borderRadius: 16 },
               propsForDots: { r: "6", strokeWidth: "2", stroke: "#880e4f" },
             }}
@@ -281,10 +318,101 @@ export default function DetailsScreen({ route }) {
           />
         )}
       </View>
+
+      <Modal visible={modalOuvert} onRequestClose={() => setModalOuvert(false)}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <View>
+            <Text style={{ fontSize: 17, textAlign: "center" }}>
+              ENTRE LES INFOS DU CHIEN !
+            </Text>
+            <TextInput
+              placeholder="NOM"
+              value={newName}
+              onChangeText={setNewName}
+              style={{ borderWidth: 1, padding: 10 }}
+            />
+            <TextInput
+              placeholder="AGE"
+              keyboardType="numeric"
+              value={newAge}
+              onChangeText={setNewAge}
+              style={{ borderWidth: 1, padding: 10 }}
+            />
+            <TextInput
+              placeholder="POIDS"
+              keyboardType="numeric"
+              value={newPoids}
+              onChangeText={setNewPoids}
+              style={{ borderWidth: 1, padding: 10 }}
+            />
+            <TextInput
+              placeholder="COULEUR"
+              value={newCouleur}
+              onChangeText={setNewCouleur}
+              style={{ borderWidth: 1, padding: 10 }}
+            />
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: 12,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setModalOuvert(false)}
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 16,
+                  backgroundColor: "#000000ff",
+                }}
+              >
+                <Text style={{ color: "white", textAlign: "center" }}>
+                  ANNULER
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  const name = newName || "PAS DE NOM ";
+                  const ageNum = Number(newAge) || 0;
+                  const poidsNum = Number(newPoids) || 0;
+                  const couleur = newCouleur || "PAS DE COULEUR ";
+                  setChienPerso((p) => [
+                    ...p,
+                    { name, age: ageNum, poids: poidsNum, couleur },
+                  ]);
+                  const serie = Array(ageLabels.length).fill(poidsNum);
+                  setPoidsParAgeMap((m) => ({ ...m, [name]: serie }));
+                  setChien(name);
+                  setAge(ageNum);
+                  setPoids(poidsNum);
+                  setCouleur(couleur);
+                  setLikes(0);
+                  setNewName("");
+                  setNewAge("");
+                  setNewPoids("");
+                  setNewCouleur("");
+                  setModalOuvert(false);
+                }}
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 16,
+                  backgroundColor: "#000000ff",
+                }}
+              >
+                <Text style={{ color: "white", textAlign: "center" }}>
+                  AJOUTER
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
- 
+
 const styles = StyleSheet.create({
   scrollContainer: {
     paddingVertical: 20,
@@ -380,6 +508,7 @@ const styles = StyleSheet.create({
     color: "#880e4f",
   },
 });
+
 // 26x theme -------
 const THEME = {
   rose: {
@@ -397,5 +526,3 @@ const THEME = {
     chartContainer: "#e4f1fc",
   },
 };
- 
- 
