@@ -16,7 +16,10 @@ import german from "../../assets/dog/german.png";
 import chihuahua from "../../assets/dog/chihuahua.png";
 import poodle from "../../assets/dog/poodle.png";
  
-export default function DetailsScreen() {
+export default function DetailsScreen({ route }) {
+  const { race } = route.params || {};
+
+
   const screenWidth = Dimensions.get("window").width;
  
   const [theme, setTheme] = useState("rose");
@@ -29,7 +32,7 @@ export default function DetailsScreen() {
  
   const ageLabels = ["1 an", "2 ans", "3 ans", "4 ans", "5 ans"];
  
-  const [chien, setChien] = useState("Choisissez un chien");
+  const [chien, setChien] = useState( race || "Choisissez un chien");
   const [age, setAge] = useState(0);
   const [poids, setPoids] = useState(0);
   const [couleur, setCouleur] = useState("");
